@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Sidebar from "./components/Sidebar";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:3001");
 
@@ -15,6 +16,7 @@ function App() {
   const [selectedUser, setSelectedUser] = useState("");
 
   const handleText = () => {
+    if (message == "") return;
     socket.emit("send_message", {
       from: socket.id,
       to: selectedUser,
@@ -27,6 +29,7 @@ function App() {
         content: message,
       },
     ]);
+    setMessage("");
   };
 
   useEffect(() => {
@@ -53,37 +56,33 @@ function App() {
   }, [socket, selectedUser]);
 
   return (
-    <div className="App">
-      <h1>Your socket: {socket.id}</h1>
-      {users?.map((user) => {
-        return (
-          <button key={user} onClick={() => setSelectedUser(user)}>
-            {user}
-          </button>
-        );
-      })}
-      <h2>Chat with: {selectedUser}</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleText();
-        }}
-      >
-        <input
-          type="text"
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="type..."
-        />
-        <button>Send</button>
-      </form>
-      {messages?.map((msg, index) => {
-        return (
-          <div key={index}>
-            <div>{msg.from}</div>
-            {msg.content}
-          </div>
-        );
-      })}
+    <div className="grid grid-cols-[0.075fr_1fr] h-[100vh]">
+      <Sidebar users={users} setSelectedUser={setSelectedUser} />
+      <div>
+        <h1>Your socket: {socket.id}</h1>
+        <h2>Chat with: {selectedUser}</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleText();
+          }}
+        >
+          <input
+            type="text"
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="type..."
+          />
+          <button>Send</button>
+        </form>
+        {messages?.map((msg, index) => {
+          return (
+            <div key={index}>
+              <div>{msg.from}</div>
+              {msg.content}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
