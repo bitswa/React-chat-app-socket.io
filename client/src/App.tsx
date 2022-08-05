@@ -88,6 +88,7 @@ function App() {
       <Chat
         selectedUser={selectedUser}
         messages={messages}
+        message={message}
         setMessage={setMessage}
         handleText={handleText}
       />

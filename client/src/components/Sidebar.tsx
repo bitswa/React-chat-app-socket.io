@@ -16,12 +16,14 @@ function Sidebar(props: Props) {
         <MenuIcon />
       </div>
       <ul className="h-[30%]">
-        <span className="text-center flex flex-col">online: {props.users.length}</span>
+        <span className="text-center flex flex-col">
+          online: {props.users.length}
+        </span>
         {props?.users?.map(({ userId, image }) => {
           return (
             <li key={userId} className="relative my-2 flex">
               <button
-                className="w-[50px] rounded-full overflow-hidden"
+                className="w-[50px] border rounded-full overflow-hidden"
                 onClick={() => setUserModal((prev) => !prev)}
               >
                 <img className="w-full" src={image} alt="user" />
@@ -33,7 +35,10 @@ function Sidebar(props: Props) {
                   </span>
                   <button
                     className="p-2 rounded-md bg-blue-300"
-                    onClick={() => props.setSelectedUser(userId)}
+                    onClick={() => {
+                      props.setSelectedUser(userId)
+                      setUserModal(false);
+                    }}
                   >
                     Talk
                   </button>
@@ -46,11 +51,18 @@ function Sidebar(props: Props) {
       <div className="mt-auto flex flex-col items-center gap-2">
         <div className="flex">
           <button
-            className="w-[50px] rounded-full overflow-hidden"
+            className="w-[50px] border rounded-full overflow-hidden"
             onClick={() => props.setShowProfileModal((prev) => !prev)}
           >
             {props?.profile?.map((profile) => {
-              return <img className="w-full" src={profile.image} alt="" />;
+              return (
+                <img
+                  key={profile.userId}
+                  className="w-full"
+                  src={profile.image}
+                  alt=""
+                />
+              );
             })}
           </button>
         </div>
