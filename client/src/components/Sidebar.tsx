@@ -16,7 +16,7 @@ function Sidebar(props: Props) {
         <MenuIcon />
       </div>
       <ul className="h-[30%]">
-        <span>online: {props.users.length}</span>
+        <span className="text-center flex flex-col">online: {props.users.length}</span>
         {props?.users?.map(({ userId, image }) => {
           return (
             <li key={userId} className="relative my-2 flex">
@@ -49,11 +49,9 @@ function Sidebar(props: Props) {
             className="w-[50px] rounded-full overflow-hidden"
             onClick={() => props.setShowProfileModal((prev) => !prev)}
           >
-            <img
-              className="w-full"
-              src="https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg"
-              alt=""
-            />
+            {props?.profile?.map((profile) => {
+              return <img className="w-full" src={profile.image} alt="" />;
+            })}
           </button>
         </div>
         <div className="">

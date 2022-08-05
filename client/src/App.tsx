@@ -23,6 +23,7 @@ function App() {
   const [selectedUser, setSelectedUser] = useState("");
 
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [image, setImage] = useState("");
 
   const handleText = () => {
     if (message == "") return;
@@ -39,6 +40,13 @@ function App() {
       },
     ]);
     setMessage("");
+  };
+
+  const handleSetImage = () => {
+    socket.emit("change_image", {
+      userId: socket.id,
+      image,
+    });
   };
 
   useEffect(() => {
@@ -70,9 +78,10 @@ function App() {
   }, [profile]);
 
   return (
-    <div className="relative flex h-[100vh]">
+    <div className="relative flex h-[100vh] text-lg">
       <Sidebar
         users={users}
+        profile={profile}
         setSelectedUser={setSelectedUser}
         setShowProfileModal={setShowProfileModal}
       />
@@ -82,7 +91,13 @@ function App() {
         setMessage={setMessage}
         handleText={handleText}
       />
-      {showProfileModal && <ProfileModal profile={profile} />}
+      {showProfileModal && (
+        <ProfileModal
+          profile={profile}
+          setImage={setImage}
+          handleSetImage={handleSetImage}
+        />
+      )}
     </div>
   );
 }

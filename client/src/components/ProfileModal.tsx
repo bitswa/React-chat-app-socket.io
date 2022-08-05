@@ -12,7 +12,7 @@ interface Props {
   ];
 }
 
-function ProfileModal({ profile }: Props) {
+function ProfileModal({ profile, setImage, handleSetImage }: Props) {
   const [showChangeUsername, setShowChangeUsername] = useState(false);
   const [showChangeImage, setShowChangeImage] = useState(false);
 
@@ -46,11 +46,15 @@ function ProfileModal({ profile }: Props) {
                 )}
               </span>
               <span>
-                <input type="text" placeholder="image url" />
+                <input
+                  type="text"
+                  placeholder="image url"
+                  onChange={(e) => setImage(e.target.value)}
+                />
 
                 {showChangeImage ? (
                   <>
-                    <button>
+                    <button onClick={() => handleSetImage()}>
                       <CheckIcon />
                     </button>
                     <button onClick={() => setShowChangeImage(false)}>

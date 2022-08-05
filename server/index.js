@@ -20,7 +20,8 @@ io.on("connection", (socket) => {
   console.log(socket.id);
   users.push({
     userId: socket.id,
-    image: 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg'
+    image:
+      "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg",
   });
 
   io.emit("connected", { users });
@@ -32,8 +33,18 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("change_image", ({ userId, image }) => {
+    const oldProfile = users.map((user) => user.userId.indexOf(userId));
+    users.splice(oldProfile, 1);
+    users.push({
+      userId,
+      image,
+    });
+    io.emit("connected", { users });
+  });
+
   socket.on("disconnect", () => {
-    const newUsers = users.map(user => user.userId.indexOf(socket.id))
+    const newUsers = users.map((user) => user.userId.indexOf(socket.id));
     users.splice(newUsers, 1);
     io.emit("connected", { users });
   });
