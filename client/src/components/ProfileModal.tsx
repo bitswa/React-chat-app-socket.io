@@ -35,30 +35,30 @@ function ProfileModal({ profile }: Props) {
                     <button>
                       <CheckIcon />
                     </button>
-                    <button>
+                    <button onClick={() => setShowChangeUsername(false)}>
                       <CloseIcon />
                     </button>
                   </>
                 ) : (
-                  <button>
+                  <button onClick={() => setShowChangeUsername(true)}>
                     <PencilIcon />
                   </button>
                 )}
               </span>
               <span>
-                <input type="text" placeholder="image url"/>
+                <input type="text" placeholder="image url" />
 
                 {showChangeImage ? (
                   <>
                     <button>
                       <CheckIcon />
                     </button>
-                    <button>
+                    <button onClick={() => setShowChangeImage(false)}>
                       <CloseIcon />
                     </button>
                   </>
                 ) : (
-                  <button>
+                  <button onClick={() => setShowChangeImage(true)}>
                     <PencilIcon />
                   </button>
                 )}
