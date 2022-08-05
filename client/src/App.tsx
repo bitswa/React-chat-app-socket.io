@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import { io } from "socket.io-client";
+import Chat from "./components/Chat";
+import ProfileModal from "./components/ProfileModal";
 const socket = io("http://localhost:3001");
 
 interface Message {
@@ -8,12 +10,19 @@ interface Message {
   content: String;
 }
 
+interface Users {
+  [user: { userId: string; image: string }];
+}
+
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<Users>([]);
+  const [profile, setProfile] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
+
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const handleText = () => {
     if (message == "") return;
@@ -35,10 +44,11 @@ function App() {
   useEffect(() => {
     // connected and disconnected event
     socket.on("connected", ({ users }) => {
-      const newUsers = users.filter((user: string) => user !== socket.id);
+      const yourProfile = users.filter((user) => user.userId == socket.id);
+      const newUsers = users.filter((user) => user.userId !== socket.id);
+      setProfile(yourProfile);
       setUsers(newUsers);
       console.log(users);
-      console.log("event");
     });
 
     //
@@ -55,34 +65,24 @@ function App() {
     });
   }, [socket, selectedUser]);
 
+  useEffect(() => {
+    console.log(profile);
+  }, [profile]);
+
   return (
-    <div className="grid grid-cols-[0.075fr_1fr] h-[100vh]">
-      <Sidebar users={users} setSelectedUser={setSelectedUser} />
-      <div>
-        <h1>Your socket: {socket.id}</h1>
-        <h2>Chat with: {selectedUser}</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleText();
-          }}
-        >
-          <input
-            type="text"
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="type..."
-          />
-          <button>Send</button>
-        </form>
-        {messages?.map((msg, index) => {
-          return (
-            <div key={index}>
-              <div>{msg.from}</div>
-              {msg.content}
-            </div>
-          );
-        })}
-      </div>
+    <div className="relative flex h-[100vh]">
+      <Sidebar
+        users={users}
+        setSelectedUser={setSelectedUser}
+        setShowProfileModal={setShowProfileModal}
+      />
+      <Chat
+        selectedUser={selectedUser}
+        messages={messages}
+        setMessage={setMessage}
+        handleText={handleText}
+      />
+      {showProfileModal && <ProfileModal profile={profile} />}
     </div>
   );
 }

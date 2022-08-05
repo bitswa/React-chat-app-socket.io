@@ -18,7 +18,10 @@ const users = [];
 
 io.on("connection", (socket) => {
   console.log(socket.id);
-  users.push(socket.id);
+  users.push({
+    userId: socket.id,
+    image: 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg'
+  });
 
   io.emit("connected", { users });
 
@@ -30,7 +33,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const newUsers = users.indexOf(socket.id);
+    const newUsers = users.map(user => user.userId.indexOf(socket.id))
     users.splice(newUsers, 1);
     io.emit("connected", { users });
   });
