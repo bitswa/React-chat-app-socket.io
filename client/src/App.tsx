@@ -24,6 +24,7 @@ function App() {
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
+  const [username, setUsername] = useState("")
 
   const handleText = () => {
     if (message == "") return;
@@ -38,14 +39,16 @@ function App() {
         from: socket.id,
         content: message,
       },
+      
     ]);
     setMessage("");
   };
 
-  const handleSetImage = () => {
-    socket.emit("change_image", {
+  const handleModification = () => {
+    socket.emit("user_modification", {
       userId: socket.id,
       image,
+      username
     });
   };
 
@@ -96,7 +99,8 @@ function App() {
         <ProfileModal
           profile={profile}
           setImage={setImage}
-          handleSetImage={handleSetImage}
+          setUsername={setUsername}
+          handleModification={handleModification}
         />
       )}
     </div>

@@ -20,6 +20,7 @@ io.on("connection", (socket) => {
   console.log(socket.id);
   users.push({
     userId: socket.id,
+    username: '',
     image:
       "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg",
   });
@@ -33,12 +34,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("change_image", ({ userId, image }) => {
+  socket.on("user_modification", ({ userId, image, username }) => {
     const oldProfile = users.map((user) => user.userId.indexOf(userId));
     users.splice(oldProfile, 1);
     users.push({
       userId,
       image,
+      username,
     });
     io.emit("connected", { users });
   });
