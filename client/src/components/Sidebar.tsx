@@ -3,6 +3,13 @@ import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
 
 interface Props {
+  profile: [
+    {
+      userId: string;
+      image: string;
+      username: string;
+    }
+  ];
   users: [];
   setSelectedUser: (value: string) => void;
 }
@@ -19,7 +26,7 @@ function Sidebar(props: Props) {
         <span className="text-center flex flex-col">
           online: {props.users.length}
         </span>
-        {props?.users?.map(({ userId, image }) => {
+        {props?.users?.map(({ userId, image, username }) => {
           return (
             <li key={userId} className="relative my-2 flex">
               <button
@@ -31,12 +38,13 @@ function Sidebar(props: Props) {
               {userModal && (
                 <div className="absolute p-3 rounded-md flex flex-col w-max top-0 left-0 translate-x-[25%] translate-y-[-20%] bg-slate-400">
                   <span className="mb-4">
-                    <h3>username: {userId}</h3>
+                    <h3>username: {username}</h3>
+                    <h2>id: {userId}</h2>
                   </span>
                   <button
                     className="p-2 rounded-md bg-blue-300"
                     onClick={() => {
-                      props.setSelectedUser(userId)
+                      props.setSelectedUser(userId);
                       setUserModal(false);
                     }}
                   >

@@ -5,11 +5,15 @@ import PencilIcon from "./PencilIcon";
 
 interface Props {
   profile: [
-    user: {
-      image: string;
+    {
       userId: string;
+      image: string;
+      username: string;
     }
   ];
+  setImage: (value: string) => void;
+  setUsername: (value: string) => void;
+  handleModification: () => void;
 }
 
 function ProfileModal({
@@ -23,7 +27,7 @@ function ProfileModal({
 
   return (
     <>
-      {profile?.map(({ image, userId, username }) => {
+      {profile?.map(({ image, userId }) => {
         return (
           <div
             key={userId}
@@ -39,7 +43,6 @@ function ProfileModal({
                 <label htmlFor="">username</label>
                 <input
                   type="text"
-                  
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={!showChangeUsername}
                 />
@@ -63,7 +66,6 @@ function ProfileModal({
                 <label htmlFor="">Image</label>
                 <input
                   type="text"
-                  
                   onChange={(e) => setImage(e.target.value)}
                   disabled={!showChangeImage}
                 />

@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 interface Props {
   messages: [
     msg: {
-      from: string;
+      from: {
+        id: string;
+        username: string;
+      }
       content: string;
     }
   ];
@@ -12,20 +15,31 @@ interface Props {
   handleText: () => void;
 }
 
-function Chat(props: Props) {
-  const [emojis, setEmojis] = useState([]);
+interface Emojis {
+  character: string;
+  codePoint: string;
+}
+
+function Chat({
+  selectedUser,
+  messages,
+  handleText,
+  setMessage,
+  message,
+}: Props) {
+  const [emojis, setEmojis] = useState<Emojis[]>([]);
   const [showEmojisModal, setShowEmojiModal] = useState(false);
-  const [emoji, setEmoji] = useState(0)
+  const [emoji, setEmoji] = useState(0);
 
   useEffect(() => {
-    fetch(
-      `https://emoji-api.com/emojis?access_key=${
-        import.meta.env.VITE_EMOJI_API_KEY
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => setEmojis(data));
-    setEmoji(parseInt(Math.random() * 100))
+    // fetch(
+    //   `https://emoji-api.com/emojis?access_key=${
+    //     import.meta.env.VITE_EMOJI_API_KEY
+    //   }`
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => setEmojis(data));
+    setEmoji(parseInt(Math.random() * 100));
   }, []);
 
   useEffect(() => {
@@ -35,15 +49,16 @@ function Chat(props: Props) {
   return (
     <div className="w-full flex flex-col justify-between">
       <div className="h-[60px] border flex items-center p-4">
-        <h1>Chat with: {props.selectedUser}</h1>
+        <h1>Chat with: {selectedUser}</h1>
       </div>
 
       <div className="h-full border">
-        {props.messages?.map((msg, index) => {
+        {messages?.map(({ from, content }, index) => {
           return (
             <div key={index}>
-              <div>{msg.from}</div>
-              {msg.content}
+              <div>{from?.username}</div>
+              <div>{from?.id}</div>
+              {content}
             </div>
           );
         })}
@@ -54,14 +69,14 @@ function Chat(props: Props) {
           className="border flex gap-4 justify-between h-full"
           onSubmit={(e) => {
             e.preventDefault();
-            props.handleText();
+            handleText();
           }}
         >
           <input
             className="w-full h-full outline-none"
             type="text"
-            value={props.message}
-            onChange={(e) => props.setMessage(e.target.value)}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             placeholder="type..."
           />
           <div className="relative">
@@ -80,7 +95,7 @@ function Chat(props: Props) {
                       key={emoji.codePoint}
                       type="button"
                       onClick={() => {
-                        props.setMessage((prev) => prev + emoji.character);
+                        setMessage((prev: string) => prev + emoji.character);
                         setShowEmojiModal(false);
                       }}
                       className="border p-1"

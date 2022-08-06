@@ -6,40 +6,57 @@ import ProfileModal from "./components/ProfileModal";
 const socket = io("http://localhost:3001");
 
 interface Message {
-  from: String;
+  from: {
+    id: string;
+    username: string;
+  };
   content: String;
 }
 
 interface Users {
-  [user: { userId: string; image: string }];
+  userId: string;
+  image: string;
+  username: string,
+}
+
+interface Profile {
+  userId: string;
+  image: string;
+  username: string;
 }
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
 
-  const [users, setUsers] = useState<Users>([]);
-  const [profile, setProfile] = useState([]);
+  const [users, setUsers] = useState<Users[]>([]);
+  const [profile, setProfile] = useState<Profile[]>([]);
   const [selectedUser, setSelectedUser] = useState("");
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
-  const [username, setUsername] = useState("")
+  const [username, setUsername] = useState("");
 
   const handleText = () => {
-    if (message == "") return;
+    if (message === "") return;
+
     socket.emit("send_message", {
-      from: socket.id,
+      from: {
+        id: socket.id,
+        username,
+      },
       to: selectedUser,
       content: message,
     });
     setMessages((prev) => [
       ...prev,
       {
-        from: socket.id,
+        from: {
+          id: socket.id,
+          username,
+        },
         content: message,
       },
-      
     ]);
     setMessage("");
   };
@@ -48,23 +65,29 @@ function App() {
     socket.emit("user_modification", {
       userId: socket.id,
       image,
-      username
+      username,
     });
   };
 
   useEffect(() => {
     // connected and disconnected event
     socket.on("connected", ({ users }) => {
-      const yourProfile = users.filter((user) => user.userId == socket.id);
-      const newUsers = users.filter((user) => user.userId !== socket.id);
+      const yourProfile = users.filter(
+        (user: Users) => user.userId == socket.id
+      );
+      const newUsers = users.filter((user: Users) => user.userId !== socket.id);
       setProfile(yourProfile);
+      yourProfile?.map((profile: Profile) => {
+        setImage(profile.image);
+        setUsername(profile.username);
+      });
       setUsers(newUsers);
       console.log(users);
     });
 
-    //
+    // receiving message from server
     socket.on("private_message", ({ from, content }: Message) => {
-      if (selectedUser !== from) return;
+      if (selectedUser !== from.id) return;
 
       setMessages((prev) => [
         ...prev,
@@ -81,7 +104,7 @@ function App() {
   }, [profile]);
 
   return (
-    <div className="relative flex h-[100vh] text-lg">
+    <div className="relative font-poppins flex h-[100vh] text-lg">
       <Sidebar
         users={users}
         profile={profile}
