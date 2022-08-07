@@ -1,6 +1,11 @@
 import { createContext, useEffect, useState } from "react";
-
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../database";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 const socket = io("http://localhost:3001");
 
 interface Message {
@@ -26,6 +31,9 @@ interface Profile {
 export const AppContext = createContext();
 
 function AppContextProvider({ children }) {
+
+  const navigate = useNavigate()
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
 
@@ -36,6 +44,8 @@ function AppContextProvider({ children }) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
   const [username, setUsername] = useState("");
+
+  const [user, setUser] = useState();
 
   const handleText = () => {
     if (message === "") return;
@@ -63,6 +73,40 @@ function AppContextProvider({ children }) {
     setMessage("");
   };
 
+  const createUserEmailPassword = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        navigate("/")
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // ..
+      });
+  };
+
+  const loginWithEmailPassword = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        navigate("/")
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
+
   const handleModification = () => {
     socket.emit("user_modification", {
       userId: socket.id,
@@ -70,6 +114,13 @@ function AppContextProvider({ children }) {
       username,
     });
   };
+
+  useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(localUser);
+    }
+  }, []);
 
   useEffect(() => {
     // connected and disconnected event
@@ -121,6 +172,9 @@ function AppContextProvider({ children }) {
         messages,
         setMessage,
         handleText,
+        createUserEmailPassword,
+        loginWithEmailPassword,
+        user
       }}
     >
       {children}
