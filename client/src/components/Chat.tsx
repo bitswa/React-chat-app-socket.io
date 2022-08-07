@@ -6,7 +6,7 @@ interface Props {
       from: {
         id: string;
         username: string;
-      }
+      };
       content: string;
     }
   ];
