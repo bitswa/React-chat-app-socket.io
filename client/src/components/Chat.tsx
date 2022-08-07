@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../contexts/AppContext";
+import Message from "../pages/home/components/Message";
 
 interface Props {
-  messages: [
-    msg: {
-      from: {
-        id: string;
-        username: string;
-      };
-      content: string;
-    }
-  ];
-  message: string;
   selectedUser: string;
-  handleText: () => void;
 }
 
 interface Emojis {
@@ -20,25 +11,21 @@ interface Emojis {
   codePoint: string;
 }
 
-function Chat({
-  selectedUser,
-  messages,
-  handleText,
-  setMessage,
-  message,
-}: Props) {
+function Chat({ selectedUser }: Props) {
+  const { message, messages, handleText, setMessage } = useContext(AppContext);
+
   const [emojis, setEmojis] = useState<Emojis[]>([]);
   const [showEmojisModal, setShowEmojiModal] = useState(false);
   const [emoji, setEmoji] = useState(0);
 
   useEffect(() => {
-    // fetch(
-    //   `https://emoji-api.com/emojis?access_key=${
-    //     import.meta.env.VITE_EMOJI_API_KEY
-    //   }`
-    // )
-    //   .then((response) => response.json())
-    //   .then((data) => setEmojis(data));
+    fetch(
+      `https://emoji-api.com/emojis?access_key=${
+        import.meta.env.VITE_EMOJI_API_KEY
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => setEmojis(data));
     setEmoji(parseInt(Math.random() * 100));
   }, []);
 
@@ -54,26 +41,20 @@ function Chat({
 
       <div className="h-full border">
         {messages?.map(({ from, content }, index) => {
-          return (
-            <div key={index}>
-              <div>{from?.username}</div>
-              <div>{from?.id}</div>
-              {content}
-            </div>
-          );
+          return <Message key={index} from={from} content={content} />;
         })}
       </div>
 
       <div className=" p-2 h-[60px]">
         <form
-          className="border flex gap-4 justify-between h-full"
+          className="border flex rounded-md  justify-between h-full"
           onSubmit={(e) => {
             e.preventDefault();
             handleText();
           }}
         >
           <input
-            className="w-full h-full outline-none"
+            className="w-full h-full rounded-l-md px-2 outline-none"
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -83,7 +64,7 @@ function Chat({
             <button
               type="button"
               onClick={() => setShowEmojiModal((prev) => !prev)}
-              className="h-full"
+              className="h-full p-2"
             >
               {emojis[emoji]?.character}
             </button>
@@ -108,7 +89,7 @@ function Chat({
             )}
           </div>
 
-          <button className="h-full" type="submit">
+          <button className="h-full p-2" type="submit">
             Send
           </button>
         </form>

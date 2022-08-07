@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useContext } from "react";
+import { AppContext } from "../contexts/AppContext";
 import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
 
@@ -10,23 +12,22 @@ interface Props {
       username: string;
     }
   ];
-  users: [];
-  setSelectedUser: (value: string) => void;
 }
 
-function Sidebar(props: Props) {
+function Sidebar({profile}: Props) {
   const [userModal, setUserModal] = useState(false);
+
+  const { setShowProfileModal, setSelectedUser, users } =
+    useContext(AppContext);
 
   return (
     <div className="border w-[80px] flex flex-col items-center p-2 py-4 gap-2">
       <div className="">
         <MenuIcon />
       </div>
-      <ul className="h-[30%]">
-        <span className="text-center flex flex-col">
-          online: {props.users.length}
-        </span>
-        {props?.users?.map(({ userId, image, username }) => {
+      <span className="text-center flex flex-col">online: {users.length}</span>
+      <ul className="h-[50%]">
+        {users?.map(({ userId, image, username }) => {
           return (
             <li key={userId} className="relative my-2 flex">
               <button
@@ -44,7 +45,7 @@ function Sidebar(props: Props) {
                   <button
                     className="p-2 rounded-md bg-blue-300"
                     onClick={() => {
-                      props.setSelectedUser(userId);
+                      setSelectedUser(userId);
                       setUserModal(false);
                     }}
                   >
@@ -60,9 +61,9 @@ function Sidebar(props: Props) {
         <div className="flex">
           <button
             className="w-[50px] border rounded-full overflow-hidden"
-            onClick={() => props.setShowProfileModal((prev) => !prev)}
+            onClick={() => setShowProfileModal((prev) => !prev)}
           >
-            {props?.profile?.map((profile) => {
+            {profile?.map((profile) => {
               return (
                 <img
                   key={profile.userId}
