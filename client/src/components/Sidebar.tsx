@@ -4,7 +4,14 @@ import { AppContext } from "../contexts/AppContext";
 import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
 
-interface Props {
+interface Context {
+  users: [
+    {
+      userId: string;
+      image: string;
+      username: string;
+    }
+  ];
   profile: [
     {
       userId: string;
@@ -12,13 +19,15 @@ interface Props {
       username: string;
     }
   ];
+  setShowProfileModal: (value: boolean) => void;
+  setSelectedUser: (value: string) => void;
 }
 
-function Sidebar({profile}: Props) {
+function Sidebar() {
   const [userModal, setUserModal] = useState(false);
 
-  const { setShowProfileModal, setSelectedUser, users } =
-    useContext(AppContext);
+  const { setShowProfileModal, setSelectedUser, users, profile } =
+    useContext<Context>(AppContext);
 
   return (
     <div className="border w-[80px] flex flex-col items-center p-2 py-4 gap-2">

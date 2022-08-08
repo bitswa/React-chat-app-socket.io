@@ -4,7 +4,8 @@ import KeyIcon from "./components/KeyIcon";
 import UserIcon from "./components/UserIcon";
 
 function Login() {
-  const {createUserEmailPassword, loginWithEmailPassword} = useContext(AppContext);
+  const { createUserEmailPassword, loginWithEmailPassword } =
+    useContext(AppContext);
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ function Login() {
           className="flex flex-col gap-2 text-start"
           onSubmit={(e) => {
             e.preventDefault();
-            loginWithEmailPassword(email, password)
+            loginWithEmailPassword(email, password);
           }}
         >
           <label>
@@ -46,7 +47,12 @@ function Login() {
           </label>
           <div className="flex gap-2">
             <button className="border rounded-md p-2 w-full">Enter</button>
-            <button className="border rounded-md p-2 w-full" onClick={() => createUserEmailPassword(email, password)}>Register</button>
+            <button
+              className="border rounded-md p-2 w-full"
+              onClick={() => createUserEmailPassword(email, password)}
+            >
+              Register
+            </button>
           </div>
         </form>
       </div>

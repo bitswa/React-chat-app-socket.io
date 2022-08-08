@@ -4,18 +4,20 @@ import CheckIcon from "./CheckIcon";
 import CloseIcon from "./CloseIcon";
 import PencilIcon from "./PencilIcon";
 
-interface Props {
-  profile: [
-    {
-      userId: string;
-      image: string;
-      username: string;
-    }
-  ];
+interface Context {
+  profile: {
+    userId: string;
+    username: string;
+    image: string;
+  };
+  setImage: (value: string) => void;
+  setUsername: (value: string) => void;
+  handleModification: () => void;
 }
 
-function ProfileModal({ profile }: Props) {
-  const { setImage, setUsername, handleModification } = useContext(AppContext);
+function ProfileModal() {
+  const { setImage, setUsername, handleModification, profile } =
+    useContext<Context>(AppContext);
 
   const [showChangeUsername, setShowChangeUsername] = useState(false);
   const [showChangeImage, setShowChangeImage] = useState(false);
@@ -35,12 +37,14 @@ function ProfileModal({ profile }: Props) {
             </div>
             <div className="flex flex-col">
               <span>
-                <label htmlFor="">username</label>
-                <input
-                  type="text"
-                  onChange={(e) => setUsername(e.target.value)}
-                  disabled={!showChangeUsername}
-                />
+                <label>
+                  username
+                  <input
+                    type="text"
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={!showChangeUsername}
+                  />
+                </label>
 
                 {showChangeUsername ? (
                   <>
@@ -63,12 +67,14 @@ function ProfileModal({ profile }: Props) {
                 )}
               </span>
               <span>
-                <label htmlFor="">Image</label>
-                <input
-                  type="text"
-                  onChange={(e) => setImage(e.target.value)}
-                  disabled={!showChangeImage}
-                />
+                <label>
+                  Image
+                  <input
+                    type="text"
+                    onChange={(e) => setImage(e.target.value)}
+                    disabled={!showChangeImage}
+                  />
+                </label>
 
                 {showChangeImage ? (
                   <>

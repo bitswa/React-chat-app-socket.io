@@ -3,14 +3,16 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../database";
+import { auth, db } from "../database";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
 const socket = io("http://localhost:3001");
 
 interface Message {
   from: {
     id: string;
+    image: string;
     username: string;
   };
   content: String;
@@ -31,8 +33,7 @@ interface Profile {
 export const AppContext = createContext();
 
 function AppContextProvider({ children }) {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
@@ -45,7 +46,7 @@ function AppContextProvider({ children }) {
   const [image, setImage] = useState("");
   const [username, setUsername] = useState("");
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   const handleText = () => {
     if (message === "") return;
@@ -73,14 +74,21 @@ function AppContextProvider({ children }) {
     setMessage("");
   };
 
-  const createUserEmailPassword = (email, password) => {
+  const createUserData = async () => {
+    await setDoc(doc(db, "users", user.uid), {
+      username: "",
+      image: "",
+    });
+  };
+
+  const createUserEmailPassword = (email: string, password: string) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         setUser(user);
         localStorage.setItem("user", JSON.stringify(user));
-        navigate("/")
+        navigate("/");
         // ...
       })
       .catch((error) => {
@@ -91,14 +99,14 @@ function AppContextProvider({ children }) {
       });
   };
 
-  const loginWithEmailPassword = (email, password) => {
+  const loginWithEmailPassword = (email: string, password: string) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         setUser(user);
         localStorage.setItem("user", JSON.stringify(user));
-        navigate("/")
+        navigate("/");
         // ...
       })
       .catch((error) => {
@@ -106,6 +114,10 @@ function AppContextProvider({ children }) {
         const errorMessage = error.message;
       });
   };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const handleModification = () => {
     socket.emit("user_modification", {
@@ -118,7 +130,7 @@ function AppContextProvider({ children }) {
   useEffect(() => {
     const localUser = localStorage.getItem("user");
     if (localUser) {
-      setUser(localUser);
+      setUser(JSON.parse(localUser));
     }
   }, []);
 
@@ -156,6 +168,12 @@ function AppContextProvider({ children }) {
     console.log(profile);
   }, [profile]);
 
+  // useEffect(() => {
+  //   const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
+  //     console.log("Current data: ", doc.data());
+  //   });
+  // }, [user]);
+
   return (
     <AppContext.Provider
       value={{
@@ -174,7 +192,7 @@ function AppContextProvider({ children }) {
         handleText,
         createUserEmailPassword,
         loginWithEmailPassword,
-        user
+        user,
       }}
     >
       {children}

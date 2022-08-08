@@ -2,7 +2,20 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../contexts/AppContext";
 import Message from "../pages/home/components/Message";
 
-interface Props {
+interface Context {
+  message: string;
+  messages: [
+    {
+      from: {
+        id: string;
+        username: string;
+        image: string;
+      };
+      content: string;
+    }
+  ];
+  handleText: () => void;
+  setMessage: (value: string) => void;
   selectedUser: string;
 }
 
@@ -11,8 +24,9 @@ interface Emojis {
   codePoint: string;
 }
 
-function Chat({ selectedUser }: Props) {
-  const { message, messages, handleText, setMessage } = useContext(AppContext);
+function Chat() {
+  const { message, messages, handleText, setMessage, selectedUser } =
+    useContext<Context>(AppContext);
 
   const [emojis, setEmojis] = useState<Emojis[]>([]);
   const [showEmojisModal, setShowEmojiModal] = useState(false);
