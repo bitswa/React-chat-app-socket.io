@@ -32,20 +32,20 @@ function Chat() {
   const [showEmojisModal, setShowEmojiModal] = useState(false);
   const [emoji, setEmoji] = useState(0);
 
-  useEffect(() => {
-    fetch(
-      `https://emoji-api.com/emojis?access_key=${
-        import.meta.env.VITE_EMOJI_API_KEY
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => setEmojis(data));
-    setEmoji(parseInt(Math.random() * 100));
-  }, []);
+  // useEffect(() => {
+  //   fetch(
+  //     `https://emoji-api.com/emojis?access_key=${
+  //       import.meta.env.VITE_EMOJI_API_KEY
+  //     }`
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => setEmojis(data));
+  //   setEmoji(parseInt(Math.random() * 100));
+  // }, []);
 
-  useEffect(() => {
-    console.log(emojis.slice(0, 100));
-  }, [emojis]);
+  // useEffect(() => {
+  //   console.log(emojis.slice(0, 100));
+  // }, [emojis]);
 
   return (
     <div className="w-full flex flex-col justify-between">

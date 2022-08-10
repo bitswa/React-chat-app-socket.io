@@ -1,12 +1,10 @@
-import { createContext, useEffect, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth, db } from "../database";
+import { createContext, useContext, useEffect, useState } from "react";
+
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import { FirebaseContext } from "./FirebaseContext";
+
+
 const socket = io("http://localhost:3001");
 
 interface Message {
@@ -33,6 +31,9 @@ interface Profile {
 export const AppContext = createContext();
 
 function AppContextProvider({ children }) {
+  const { user, getUserData, setUser, updateUserData } =
+    useContext(FirebaseContext);
+
   const navigate = useNavigate();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -45,8 +46,6 @@ function AppContextProvider({ children }) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
   const [username, setUsername] = useState("");
-
-  const [user, setUser] = useState({});
 
   const handleText = () => {
     if (message === "") return;
@@ -74,71 +73,78 @@ function AppContextProvider({ children }) {
     setMessage("");
   };
 
-  const createUserData = async () => {
-    await setDoc(doc(db, "users", user.uid), {
-      username: "",
-      image: "",
-    });
-  };
-
-  const createUserEmailPassword = (email: string, password: string) => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/");
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        // ..
-      });
-  };
-
-  const loginWithEmailPassword = (email: string, password: string) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/");
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
+  const handleModification = async () => {
+    console.log("modific");
+    updateUserData(image, username);
+    // socket.emit("user_modification", {
+    //   userId: socket.id,
+    //   image,
+    //   username,
+    // });
+    test();
   };
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    socket.on("test", () => {
+      test()
+    })
+  }, [socket])
 
-  const handleModification = () => {
+  useEffect(() => {
+    // const getUserData = async () => {
+    //   console.log(user);
+    //   const docRef = doc(db, "users", auth.currentUser?.uid);
+    //   const docSnap = await getDoc(docRef);
+    //   if (docSnap.exists()) {
+    //     const { image, username } = docSnap.data();
+    //     console.log("Document data:", docSnap.data());
+    //     // setImage(image);
+    //     // setUsername(username);
+    //     // socket.emit("user_modification", {
+    //     //   userId: socket.id,
+    //     //   image,
+    //     //   username,
+    //     // });
+    //     return { username, image };
+    //   } else {
+    //     // doc.data() will be undefined in this case
+    //     console.log("No such document!");
+    //   }
+    // };
+  }, [socket]);
+
+  useEffect(() => {
+    console.log(image, username);
+  }, [username, image]);
+
+  const test = async () => {
+    const data = await getUserData();
+    if (!data) return;
+
+    console.log(data);
+    setImage(data?.image);
+    setUsername(data?.username);
+
     socket.emit("user_modification", {
       userId: socket.id,
-      image,
-      username,
+      image: data.image,
+      username: data.username,
     });
   };
-
-  useEffect(() => {
-    const localUser = localStorage.getItem("user");
-    if (localUser) {
-      setUser(JSON.parse(localUser));
-    }
-  }, []);
-
   useEffect(() => {
     // connected and disconnected event
+    // socket.on("new_user", ({userId}) => {
+    //   getUserData()
+    //   socket.emit("received_new_user", {
+    //     userId,
+    //     image,
+    //     username
+    //   })
+    // })
+
     socket.on("connected", ({ users }) => {
       const yourProfile = users.filter(
-        (user: Users) => user.userId == socket.id
+        (user: Users) => user.userId === socket.id
       );
       const newUsers = users.filter((user: Users) => user.userId !== socket.id);
       setProfile(yourProfile);
@@ -168,31 +174,30 @@ function AppContextProvider({ children }) {
     console.log(profile);
   }, [profile]);
 
-  // useEffect(() => {
-  //   const unsub = onSnapshot(doc(db, "users", user.uid), (doc) => {
-  //     console.log("Current data: ", doc.data());
-  //   });
-  // }, [user]);
+  useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
+    }
+  }, []);
 
   return (
     <AppContext.Provider
       value={{
         showProfileModal,
         setShowProfileModal,
-        profile,
         selectedUser,
         setSelectedUser,
+        message,
+        setMessage,
+        profile,
         users,
         setImage,
         setUsername,
         handleModification,
-        message,
         messages,
-        setMessage,
         handleText,
-        createUserEmailPassword,
-        loginWithEmailPassword,
-        user,
+        test,
       }}
     >
       {children}

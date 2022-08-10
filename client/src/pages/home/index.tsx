@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../../contexts/AppContext";
 
 import Sidebar from "../../components/Sidebar";
@@ -13,6 +13,8 @@ interface Context {
 function Home() {
   const { selectedUser, showProfileModal } = useContext<Context>(AppContext);
 
+
+   
   
 
   return (

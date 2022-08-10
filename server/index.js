@@ -18,10 +18,10 @@ const users = [];
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+  
   users.push({
     userId: socket.id,
-    image:
-      "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg",
+    image: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
     username: "",
   });
 
@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
     console.log(users);
     users.map((user, index) => {
       if (user.userId !== userId) return;
-      
+
       users.splice(index, 1);
       console.log(userId, image, username);
       users.push({
@@ -48,6 +48,7 @@ io.on("connection", (socket) => {
         username,
       });
       console.log(users);
+      
       io.emit("connected", { users });
     });
   });
@@ -57,6 +58,8 @@ io.on("connection", (socket) => {
     users.splice(newUsers, 1);
     io.emit("connected", { users });
   });
+
+  
 });
 
 server.listen(3001, () => {

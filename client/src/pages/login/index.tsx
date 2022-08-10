@@ -1,11 +1,17 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
+import { FirebaseContext } from "../../contexts/FirebaseContext";
 import KeyIcon from "./components/KeyIcon";
 import UserIcon from "./components/UserIcon";
 
+interface Context {
+  createUserEmailPassword: (value: string, value2: string) => void;
+  loginWithEmailPassword: (value: string, value2: string) => void;
+}
+
 function Login() {
   const { createUserEmailPassword, loginWithEmailPassword } =
-    useContext(AppContext);
+    useContext<Context>(FirebaseContext);
 
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
