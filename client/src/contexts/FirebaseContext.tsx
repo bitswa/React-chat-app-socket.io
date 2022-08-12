@@ -34,22 +34,13 @@ function FirebaseContextProvider({ children }) {
   const getUserData = async () => {
     console.log(user);
     if (!auth?.currentUser?.uid) return;
-    
+
     const docRef = doc(db, "users", auth?.currentUser?.uid);
     const docSnap = await getDoc(docRef);
-    console.log("teste1")
 
     if (docSnap.exists()) {
-      console.log("2")
       const { image, username } = docSnap?.data();
-      console.log("Document data:", docSnap?.data());
-      // setImage(image);
-      // setUsername(username);
-      // socket.emit("user_modification", {
-      //   userId: socket.id,
-      //   image,
-      //   username,
-      // });
+
       return { username, image };
     } else {
       // doc.data() will be undefined in this case
@@ -91,19 +82,6 @@ function FirebaseContextProvider({ children }) {
         const errorMessage = error.message;
       });
   };
-
-  // const getUserData = async () => {
-  //   const docRef = doc(db, "users", user?.uid);
-  //   const docSnap = await getDoc(docRef);
-
-  //   if (docSnap.exists()) {
-  //     const { image, username } = docSnap.data();
-  //     console.log("Document data:", docSnap.data());
-  //   } else {
-  //     // doc.data() will be undefined in this case
-  //     console.log("No such document!");
-  //   }
-  // };
 
   useEffect(() => {
     const localUser = localStorage.getItem("user");

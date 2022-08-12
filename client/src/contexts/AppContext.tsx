@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "./FirebaseContext";
-
 
 const socket = io("http://localhost:3001");
 
@@ -40,7 +38,7 @@ function AppContextProvider({ children }) {
   const [message, setMessage] = useState("");
 
   const [users, setUsers] = useState<Users[]>([]);
-  const [profile, setProfile] = useState<Profile[]>([]);
+  const [profile, setProfile] = useState({});
   const [selectedUser, setSelectedUser] = useState("");
 
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -74,84 +72,55 @@ function AppContextProvider({ children }) {
   };
 
   const handleModification = async () => {
-    console.log("modific");
     updateUserData(image, username);
-    // socket.emit("user_modification", {
-    //   userId: socket.id,
-    //   image,
-    //   username,
-    // });
-    test();
+    runGetUserData();
   };
 
-  useEffect(() => {
-    socket.on("test", () => {
-      test()
-    })
-  }, [socket])
-
-  useEffect(() => {
-    // const getUserData = async () => {
-    //   console.log(user);
-    //   const docRef = doc(db, "users", auth.currentUser?.uid);
-    //   const docSnap = await getDoc(docRef);
-    //   if (docSnap.exists()) {
-    //     const { image, username } = docSnap.data();
-    //     console.log("Document data:", docSnap.data());
-    //     // setImage(image);
-    //     // setUsername(username);
-    //     // socket.emit("user_modification", {
-    //     //   userId: socket.id,
-    //     //   image,
-    //     //   username,
-    //     // });
-    //     return { username, image };
-    //   } else {
-    //     // doc.data() will be undefined in this case
-    //     console.log("No such document!");
-    //   }
-    // };
-  }, [socket]);
-
-  useEffect(() => {
-    console.log(image, username);
-  }, [username, image]);
-
-  const test = async () => {
+  const runGetUserData = async () => {
     const data = await getUserData();
     if (!data) return;
 
+    const { image, username } = data;
+
     console.log(data);
-    setImage(data?.image);
-    setUsername(data?.username);
 
     socket.emit("user_modification", {
       userId: socket.id,
-      image: data.image,
-      username: data.username,
+      image: image,
+      username: username,
     });
-  };
-  useEffect(() => {
-    // connected and disconnected event
-    // socket.on("new_user", ({userId}) => {
-    //   getUserData()
-    //   socket.emit("received_new_user", {
-    //     userId,
-    //     image,
-    //     username
-    //   })
-    // })
 
+    setImage(data?.image);
+    setUsername(data?.username);
+  };
+
+  useEffect(() => {
+    console.log(profile);
+  }, [profile]);
+
+  useEffect(() => {
+    setTimeout(runGetUserData, 1500);
+  }, []);
+
+  useEffect(() => {
+    //connected and disconnected event
     socket.on("connected", ({ users }) => {
-      const yourProfile = users.filter(
-        (user: Users) => user.userId === socket.id
-      );
-      const newUsers = users.filter((user: Users) => user.userId !== socket.id);
-      setProfile(yourProfile);
-      yourProfile?.map((profile: Profile) => {
-        setImage(profile.image);
-        setUsername(profile.username);
+      users.filter((user: Users) => {
+        if (user.userId !== socket.id) return;
+
+        const { userId, image, username } = user;
+
+        setImage(image);
+        setUsername(username);
+        setProfile({
+          userId,
+          image,
+          username,
+        });
       });
+
+      const newUsers = users.filter((user: Users) => user.userId !== socket.id);
+
       setUsers(newUsers);
       console.log(users);
     });
@@ -169,10 +138,6 @@ function AppContextProvider({ children }) {
       ]);
     });
   }, [socket, selectedUser]);
-
-  useEffect(() => {
-    console.log(profile);
-  }, [profile]);
 
   useEffect(() => {
     const localUser = localStorage.getItem("user");
@@ -193,11 +158,12 @@ function AppContextProvider({ children }) {
         profile,
         users,
         setImage,
+        image,
         setUsername,
+        username,
         handleModification,
         messages,
         handleText,
-        test,
       }}
     >
       {children}

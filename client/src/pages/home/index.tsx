@@ -13,10 +13,6 @@ interface Context {
 function Home() {
   const { selectedUser, showProfileModal } = useContext<Context>(AppContext);
 
-
-   
-  
-
   return (
     <div className="relative font-poppins flex h-[100vh] text-lg">
       <Sidebar />

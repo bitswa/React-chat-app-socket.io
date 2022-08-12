@@ -12,13 +12,11 @@ interface Context {
       username: string;
     }
   ];
-  profile: [
-    {
-      userId: string;
-      image: string;
-      username: string;
-    }
-  ];
+  profile: {
+    userId: string;
+    image: string;
+    username: string;
+  };
   setShowProfileModal: (value: boolean) => void;
   setSelectedUser: (value: string) => void;
 }
@@ -30,7 +28,7 @@ function Sidebar() {
     useContext<Context>(AppContext);
 
   return (
-    <div className="border w-[80px] flex flex-col items-center p-2 py-4 gap-2">
+    <div className="border w-[80px] flex flex-col items-center p-2 py-4 gap-2 m-4 rounded-2xl">
       <div className="">
         <MenuIcon />
       </div>
@@ -40,7 +38,7 @@ function Sidebar() {
           return (
             <li key={userId} className="relative my-2 flex">
               <button
-                className="w-[50px] border rounded-full overflow-hidden"
+                className="w-[50px] h-[50px] border rounded-full overflow-hidden"
                 onClick={() => setUserModal((prev) => !prev)}
               >
                 <img className="w-full" src={image} alt="user" />
@@ -66,22 +64,18 @@ function Sidebar() {
           );
         })}
       </ul>
-      <div className="mt-auto flex flex-col items-center gap-2">
-        <div className="flex">
+      <div className="mt-auto flex flex-col items-center gap-3 border-t">
+        <div className="flex mt-3">
           <button
-            className="w-[50px] border rounded-full overflow-hidden"
+            className="w-[50px] h-[50px] border rounded-full overflow-hidden"
             onClick={() => setShowProfileModal((prev) => !prev)}
           >
-            {profile?.map((profile) => {
-              return (
-                <img
-                  key={profile.userId}
-                  className="w-full"
-                  src={profile.image}
-                  alt=""
-                />
-              );
-            })}
+            <img
+              key={profile.userId}
+              className="w-full"
+              src={profile.image}
+              alt=""
+            />
           </button>
         </div>
         <div className="">

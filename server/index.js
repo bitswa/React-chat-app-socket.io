@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
   });
 
   io.emit("connected", { users });
-
+  
   socket.on("send_message", ({ to, from, content }) => {
     console.log(to, from, content);
     socket.to(to).emit("private_message", {
