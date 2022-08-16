@@ -1,9 +1,9 @@
 import { useContext, useEffect } from "react";
 import { AppContext } from "../../contexts/AppContext";
 
-import Sidebar from "../../components/Sidebar";
-import Chat from "../../components/Chat";
-import ProfileModal from "../../components/ProfileModal";
+import Sidebar from "./components/Sidebar";
+import Chat from "./components/Chat";
+import ProfileModal from "./components/ProfileModal";
 
 interface Context {
   selectedUser: string;
@@ -14,7 +14,7 @@ function Home() {
   const { selectedUser, showProfileModal } = useContext<Context>(AppContext);
 
   return (
-    <div className="relative font-poppins flex h-[100vh] text-lg">
+    <div className="relative font-poppins flex h-[100vh] text-lg bg-zinc-700 p-4 text-white">
       <Sidebar />
       {selectedUser && <Chat />}
       {showProfileModal && <ProfileModal />}

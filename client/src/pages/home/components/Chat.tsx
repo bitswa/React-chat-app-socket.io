@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../contexts/AppContext";
-import Message from "../pages/home/components/Message";
+import { AppContext } from "../../../contexts/AppContext";
+import Message from "./Message";
+import SendIcon from "./SendIcon";
 
 interface Context {
   message: string;
@@ -48,27 +49,33 @@ function Chat() {
   // }, [emojis]);
 
   return (
-    <div className="w-full flex flex-col justify-between">
-      <div className="h-[60px] border flex items-center p-4">
+    <div className="w-full flex flex-col justify-between bg-zinc-800 rounded-md">
+      <div className="h-[60px] border-b border-zinc-700 flex items-center p-4">
         <h1>Chat with: {selectedUser}</h1>
       </div>
 
-      <div className="h-full border">
-        {messages?.map(({ from, content }, index) => {
-          return <Message key={index} from={from} content={content} />;
-        })}
+      <div className="h-full p-2">
+        {messages?.length ? (
+          messages?.map(({ from, content }, index) => {
+            return <Message key={index} from={from} content={content} />;
+          })
+        ) : (
+          <div className="w-full h-full grid place-items-center">
+            <h1 className="">0 messages, empty.</h1>
+          </div>
+        )}
       </div>
 
       <div className=" p-2 h-[60px]">
         <form
-          className="border flex rounded-md  justify-between h-full"
+          className=" flex rounded-md  justify-between h-full bg-zinc-700"
           onSubmit={(e) => {
             e.preventDefault();
             handleText();
           }}
         >
           <input
-            className="w-full h-full rounded-l-md px-2 outline-none"
+            className="w-full h-full rounded-l-md px-2 outline-none bg-transparent"
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -104,7 +111,7 @@ function Chat() {
           </div>
 
           <button className="h-full p-2" type="submit">
-            Send
+            <SendIcon />
           </button>
         </form>
       </div>

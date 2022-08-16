@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
-import { AppContext } from "../contexts/AppContext";
+import { AppContext } from "../../../contexts/AppContext";
 import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
 
@@ -28,17 +28,14 @@ function Sidebar() {
     useContext<Context>(AppContext);
 
   return (
-    <div className="border w-[80px] flex flex-col items-center p-2 py-4 gap-2 m-4 rounded-2xl">
-      <div className="">
-        <MenuIcon />
-      </div>
+    <div className=" w-[80px] flex flex-col items-center p-2 py-4 gap-2 mr-4 rounded-md bg-zinc-800">
       <span className="text-center flex flex-col">online: {users.length}</span>
       <ul className="h-[50%]">
         {users?.map(({ userId, image, username }) => {
           return (
             <li key={userId} className="relative my-2 flex">
               <button
-                className="w-[50px] h-[50px] border rounded-full overflow-hidden"
+                className="w-[50px] h-[50px] rounded-full overflow-hidden"
                 onClick={() => setUserModal((prev) => !prev)}
               >
                 <img className="w-full" src={image} alt="user" />
@@ -64,10 +61,10 @@ function Sidebar() {
           );
         })}
       </ul>
-      <div className="mt-auto flex flex-col items-center gap-3 border-t">
+      <div className="mt-auto flex flex-col items-center gap-3 border-t border-zinc-700">
         <div className="flex mt-3">
           <button
-            className="w-[50px] h-[50px] border rounded-full overflow-hidden"
+            className="w-[50px] h-[50px] rounded-full overflow-hidden"
             onClick={() => setShowProfileModal((prev) => !prev)}
           >
             <img
@@ -79,7 +76,7 @@ function Sidebar() {
           </button>
         </div>
         <div className="">
-          <button className="border w-full rounded-full p-3">
+          <button className=" bg-red-500 w-full rounded-full p-3">
             <ExitIcon />
           </button>
         </div>

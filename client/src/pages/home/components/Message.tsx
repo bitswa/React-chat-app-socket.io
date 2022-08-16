@@ -9,7 +9,7 @@ interface Props {
 
 function Message({ from, content }: Props) {
   return (
-    <div className="flex border p-2">
+    <div className="flex p-2">
       <div className="mr-2">
         <img className="rounded-full w-[50px]" src={from?.image} alt="" />
       </div>
