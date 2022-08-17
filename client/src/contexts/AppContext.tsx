@@ -29,7 +29,7 @@ interface Profile {
 export const AppContext = createContext();
 
 function AppContextProvider({ children }) {
-  const { user, getUserData, setUser, updateUserData } =
+  const { getUserData, setUser, updateUserData } =
     useContext(FirebaseContext);
 
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ function AppContextProvider({ children }) {
     setMessage("");
   };
 
-  const handleModification = async () => {
+  const handleModification = () => {
     updateUserData(image, username);
     runGetUserData();
   };

@@ -31,10 +31,7 @@ function ProfileModal() {
   const [showChangeImage, setShowChangeImage] = useState(false);
 
   return (
-    <div
-      key={profile.userId}
-      className="absolute flex gap-4 p-5 bg-zinc-600 translate-x-[20vw] translate-y-[40vh]"
-    >
+    <div className="absolute flex flex-col items-center gap-2 p-4 bg-zinc-600 rounded-md w-[calc(375px+5%)] translate-x-[20%] translate-y-[-70%]">
       <div className="w-[120px] h-[120px]">
         <img
           className="w-full h-full rounded-full"
@@ -43,7 +40,7 @@ function ProfileModal() {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <span className="flex flex-col">
           <label className="">username</label>
           <span className="flex gap-2">
@@ -84,7 +81,7 @@ function ProfileModal() {
           </span>
         </span>
         <span className="flex flex-col">
-          <label>Image</label>
+          <label>image</label>
           <span className="flex gap-2">
             <input
               type="text"
@@ -104,12 +101,18 @@ function ProfileModal() {
                 >
                   <CheckIcon />
                 </button>
-                <button className="p-1 rounded-full bg-red-500" onClick={() => setShowChangeImage(false)}>
+                <button
+                  className="p-1 rounded-full bg-red-500"
+                  onClick={() => setShowChangeImage(false)}
+                >
                   <CloseIcon />
                 </button>
               </div>
             ) : (
-              <button className="p-1 rounded-full bg-blue-400" onClick={() => setShowChangeImage(true)}>
+              <button
+                className="p-1 rounded-full bg-blue-400"
+                onClick={() => setShowChangeImage(true)}
+              >
                 <PencilIcon />
               </button>
             )}

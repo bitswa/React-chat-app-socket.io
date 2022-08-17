@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../contexts/AppContext";
 import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
+import ProfileModal from "./ProfileModal";
 
 interface Context {
   users: [
@@ -22,10 +23,15 @@ interface Context {
 }
 
 function Sidebar() {
-  const [userModal, setUserModal] = useState(false);
+  const {
+    setShowProfileModal,
+    showProfileModal,
+    setSelectedUser,
+    users,
+    profile,
+  } = useContext<Context>(AppContext);
 
-  const { setShowProfileModal, setSelectedUser, users, profile } =
-    useContext<Context>(AppContext);
+  const [userModal, setUserModal] = useState("");
 
   return (
     <div className=" w-[80px] flex flex-col items-center p-2 py-4 gap-2 mr-4 rounded-md bg-zinc-800">
@@ -36,21 +42,27 @@ function Sidebar() {
             <li key={userId} className="relative my-2 flex">
               <button
                 className="w-[50px] h-[50px] rounded-full overflow-hidden"
-                onClick={() => setUserModal((prev) => !prev)}
+                onClick={() => {
+                  userModal === userId
+                    ? setUserModal("")
+                    : setUserModal(userId);
+                  setShowProfileModal(false);
+                }}
               >
                 <img className="w-full" src={image} alt="user" />
               </button>
-              {userModal && (
-                <div className="absolute p-3 rounded-md flex flex-col w-max top-0 left-0 translate-x-[25%] translate-y-[-20%] bg-slate-400">
+              {userModal === userId && (
+                <div className="absolute p-3 rounded-md flex flex-col w-max top-0 left-0 translate-x-[25%] translate-y-[-20%] bg-zinc-600">
                   <span className="mb-4">
-                    <h3>username: {username}</h3>
+                    {username && <h3>username: {username}</h3>}
                     <h2>id: {userId}</h2>
                   </span>
                   <button
-                    className="p-2 rounded-md bg-blue-300"
+                    className="p-2 rounded-md bg-blue-500"
                     onClick={() => {
                       setSelectedUser(userId);
-                      setUserModal(false);
+                      setUserModal("");
+                      setShowProfileModal(false);
                     }}
                   >
                     Talk
@@ -62,10 +74,13 @@ function Sidebar() {
         })}
       </ul>
       <div className="mt-auto flex flex-col items-center gap-3 border-t border-zinc-700">
-        <div className="flex mt-3">
+        <div className="flex mt-3 relative">
           <button
             className="w-[50px] h-[50px] rounded-full overflow-hidden"
-            onClick={() => setShowProfileModal((prev) => !prev)}
+            onClick={() => {
+              setShowProfileModal((prev) => !prev);
+              setUserModal("");
+            }}
           >
             <img
               key={profile.userId}
@@ -74,6 +89,7 @@ function Sidebar() {
               alt=""
             />
           </button>
+          {showProfileModal && <ProfileModal />}
         </div>
         <div className="">
           <button className=" bg-red-500 w-full rounded-full p-3">
