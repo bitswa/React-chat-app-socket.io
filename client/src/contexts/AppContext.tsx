@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "./FirebaseContext";
 
 const socket = io("http://localhost:3001");
@@ -29,10 +28,7 @@ interface Profile {
 export const AppContext = createContext();
 
 function AppContextProvider({ children }) {
-  const { getUserData, setUser, updateUserData } =
-    useContext(FirebaseContext);
-
-  const navigate = useNavigate();
+  const { getUserData, setUser, updateUserData } = useContext(FirebaseContext);
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
@@ -72,8 +68,7 @@ function AppContextProvider({ children }) {
   };
 
   const handleModification = () => {
-    updateUserData(image, username);
-    runGetUserData();
+    updateUserData(image, username).then(() => runGetUserData());
   };
 
   const runGetUserData = async () => {
@@ -92,6 +87,17 @@ function AppContextProvider({ children }) {
 
     setImage(data?.image);
     setUsername(data?.username);
+  };
+
+  const removeMessage = (key) => {
+    const newMessages = messages.filter((msg, index) => index !== key);
+    console.log(key);
+    console.log(newMessages);
+
+    socket.emit("new_messages", {
+      to: selectedUser,
+      newMessages,
+    });
   };
 
   useEffect(() => {
@@ -139,6 +145,10 @@ function AppContextProvider({ children }) {
     });
   }, [socket, selectedUser]);
 
+  socket.on("new_message_update", ({ newMessages }) => {
+    setMessages(newMessages);
+  });
+
   useEffect(() => {
     const localUser = localStorage.getItem("user");
     if (localUser) {
@@ -164,6 +174,7 @@ function AppContextProvider({ children }) {
         handleModification,
         messages,
         handleText,
+        removeMessage,
       }}
     >
       {children}

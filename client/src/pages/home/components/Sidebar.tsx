@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../contexts/AppContext";
 import ExitIcon from "./ExitIcon";
 import MenuIcon from "./MenuIcon";
@@ -32,6 +33,7 @@ function Sidebar() {
   } = useContext<Context>(AppContext);
 
   const [userModal, setUserModal] = useState("");
+  const Navigate = useNavigate();
 
   return (
     <div className=" w-[80px] flex flex-col items-center p-2 py-4 gap-2 mr-4 rounded-md bg-zinc-800">
@@ -52,7 +54,7 @@ function Sidebar() {
                 <img className="w-full" src={image} alt="user" />
               </button>
               {userModal === userId && (
-                <div className="absolute p-3 rounded-md flex flex-col w-max top-0 left-0 translate-x-[25%] translate-y-[-20%] bg-zinc-600">
+                <div className="absolute p-3 rounded-md flex flex-col w-max translate-x-[28%] translate-y-[-20%] bg-zinc-600">
                   <span className="mb-4">
                     {username && <h3>username: {username}</h3>}
                     <h2>id: {userId}</h2>
@@ -92,7 +94,13 @@ function Sidebar() {
           {showProfileModal && <ProfileModal />}
         </div>
         <div className="">
-          <button className=" bg-red-500 w-full rounded-full p-3">
+          <button
+            className=" bg-red-500 w-full rounded-full p-3"
+            onClick={() => {
+              localStorage.removeItem("user");
+              Navigate("/login");
+            }}
+          >
             <ExitIcon />
           </button>
         </div>

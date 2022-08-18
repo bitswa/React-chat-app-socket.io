@@ -18,15 +18,16 @@ const users = [];
 
 io.on("connection", (socket) => {
   console.log(socket.id);
-  
+
   users.push({
     userId: socket.id,
-    image: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+    image:
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
     username: "",
   });
 
   io.emit("connected", { users });
-  
+
   socket.on("send_message", ({ to, from, content }) => {
     console.log(to, from, content);
     socket.to(to).emit("private_message", {
@@ -48,9 +49,14 @@ io.on("connection", (socket) => {
         username,
       });
       console.log(users);
-      
+
       io.emit("connected", { users });
     });
+  });
+
+  socket.on("new_messages", ({ to, newMessages }) => {
+    console.log(newMessages);
+    socket.to(to).emit("new_message_update", [newMessages]);
   });
 
   socket.on("disconnect", () => {
@@ -58,8 +64,6 @@ io.on("connection", (socket) => {
     users.splice(newUsers, 1);
     io.emit("connected", { users });
   });
-
-  
 });
 
 server.listen(3001, () => {

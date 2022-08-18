@@ -33,20 +33,16 @@ function Chat() {
   const [showEmojisModal, setShowEmojiModal] = useState(false);
   const [emoji, setEmoji] = useState(0);
 
-  // useEffect(() => {
-  //   fetch(
-  //     `https://emoji-api.com/emojis?access_key=${
-  //       import.meta.env.VITE_EMOJI_API_KEY
-  //     }`
-  //   )
-  //     .then((response) => response.json())
-  //     .then((data) => setEmojis(data));
-  //   setEmoji(parseInt(Math.random() * 100));
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log(emojis.slice(0, 100));
-  // }, [emojis]);
+  useEffect(() => {
+    fetch(
+      `https://emoji-api.com/emojis?access_key=${
+        import.meta.env.VITE_EMOJI_API_KEY
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => setEmojis(data));
+    setEmoji(parseInt(Math.random() * 100));
+  }, []);
 
   return (
     <div className="w-full flex flex-col justify-between bg-zinc-800 rounded-md">
@@ -55,11 +51,13 @@ function Chat() {
       </div>
 
       <div className="h-full p-2">
-        {messages?.length ? (
-          messages?.map(({ from, content }, index) => {
-            return <Message key={index} from={from} content={content} />;
-          })
-        ) : (
+        {messages?.map(({ from, content }, index) => {
+          return (
+            <Message key={index} index={index} from={from} content={content} />
+          );
+        })}
+
+        {!messages?.length && (
           <div className="w-full h-full grid place-items-center">
             <h1 className="">0 messages, empty.</h1>
           </div>
@@ -90,7 +88,7 @@ function Chat() {
               {emojis[emoji]?.character}
             </button>
             {showEmojisModal && (
-              <div className="absolute grid grid-cols-6 overflow-y-auto h-[210px] w-max top-0 left-0 bg-slate-400 translate-x-[-60%] translate-y-[-110%]">
+              <div className="absolute grid grid-cols-6 overflow-y-auto h-[210px] w-max top-0 left-0 bg-zinc-600 translate-x-[-60%] translate-y-[-110%]">
                 {emojis?.slice(0, 100).map((emoji) => {
                   return (
                     <button
@@ -100,7 +98,7 @@ function Chat() {
                         setMessage((prev: string) => prev + emoji.character);
                         setShowEmojiModal(false);
                       }}
-                      className="border p-1"
+                      className=" p-1 hover:bg-zinc-500 rounded-lg"
                     >
                       {emoji.character}
                     </button>

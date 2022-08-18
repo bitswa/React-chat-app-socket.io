@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hover_message:hover .hover_message_icons {
+  opacity: 1;
+}

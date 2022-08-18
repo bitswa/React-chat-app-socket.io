@@ -31,7 +31,7 @@ function ProfileModal() {
   const [showChangeImage, setShowChangeImage] = useState(false);
 
   return (
-    <div className="absolute flex flex-col items-center gap-2 p-4 bg-zinc-600 rounded-md w-[calc(375px+5%)] translate-x-[20%] translate-y-[-70%]">
+    <div className="absolute flex flex-col items-center gap-2 p-4 bg-zinc-600 rounded-md w-[calc(280px+5%)] translate-x-[5%] translate-y-[-110%] md:translate-x-[25%] md:translate-y-[-80%]">
       <div className="w-[120px] h-[120px]">
         <img
           className="w-full h-full rounded-full"
@@ -40,10 +40,10 @@ function ProfileModal() {
         />
       </div>
 
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col gap-2 w-full">
         <span className="flex flex-col">
           <label className="">username</label>
-          <span className="flex gap-2">
+          <span className="flex gap-2 bg-zinc-700 rounded-md p-2">
             <input
               type="text"
               className="w-full outline-none bg-transparent border-b"
@@ -82,7 +82,7 @@ function ProfileModal() {
         </span>
         <span className="flex flex-col">
           <label>image</label>
-          <span className="flex gap-2">
+          <span className="flex gap-2 bg-zinc-700 rounded-md p-2">
             <input
               type="text"
               className="w-full bg-transparent outline-none border-b"

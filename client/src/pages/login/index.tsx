@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { AppContext } from "../../contexts/AppContext";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FirebaseContext } from "../../contexts/FirebaseContext";
 import KeyIcon from "./components/KeyIcon";
 import UserIcon from "./components/UserIcon";
@@ -13,8 +13,15 @@ function Login() {
   const { createUserEmailPassword, loginWithEmailPassword } =
     useContext<Context>(FirebaseContext);
 
+  const Navigate = useNavigate();
+
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    if (localUser) return Navigate("/");
+  }, []);
 
   return (
     <div className="h-[100vh] grid place-items-center bg-gray-800 text-white">
