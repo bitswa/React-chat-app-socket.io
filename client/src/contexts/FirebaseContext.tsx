@@ -15,9 +15,9 @@ function FirebaseContextProvider({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
 
-  const createUserData = async (uid: string) => {
+  const createUserData = async (uid: string, email: string) => {
     await setDoc(doc(db, "users", uid), {
-      username: "",
+      username: email.substring(0, email.indexOf("@")),
       image:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
     });
@@ -41,7 +41,7 @@ function FirebaseContextProvider({ children }) {
     if (docSnap.exists()) {
       const { image, username } = docSnap?.data();
 
-      return { username, image };
+      return { newUsername: username, newImage: image };
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -56,7 +56,7 @@ function FirebaseContextProvider({ children }) {
         setUser(user);
         localStorage.setItem("user", JSON.stringify(user));
         navigate("/");
-        createUserData(user.uid);
+        createUserData(user.uid, user.email);
         // ...
       })
       .catch((error) => {

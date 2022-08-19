@@ -31,6 +31,7 @@ function Login() {
           className="flex flex-col gap-2 text-start"
           onSubmit={(e) => {
             e.preventDefault();
+            if (email === "" || password === "") return;
             loginWithEmailPassword(email, password);
           }}
         >

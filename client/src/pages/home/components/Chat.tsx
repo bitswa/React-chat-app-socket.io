@@ -47,14 +47,12 @@ function Chat() {
   return (
     <div className="w-full flex flex-col justify-between bg-zinc-800 rounded-md">
       <div className="h-[60px] border-b border-zinc-700 flex items-center p-4">
-        <h1>Chat with: {selectedUser}</h1>
+        <h1>with: {selectedUser.username}</h1>
       </div>
 
       <div className="h-full p-2">
         {messages?.map(({ from, content }, index) => {
-          return (
-            <Message key={index} index={index} from={from} content={content} />
-          );
+          return <Message key={index} from={from} content={content} />;
         })}
 
         {!messages?.length && (

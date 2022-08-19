@@ -17,12 +17,13 @@ function Home() {
   useEffect(() => {
     const localUser = localStorage.getItem("user");
     if (!localUser) return Navigate("/login");
+    console.log(localUser);
   }, []);
 
   return (
     <div className="relative font-poppins flex h-[100vh] text-lg bg-zinc-700 p-4 text-white">
       <Sidebar />
-      {selectedUser && <Chat />}
+      {selectedUser.id && <Chat />}
     </div>
   );
 }

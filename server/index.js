@@ -54,10 +54,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("new_messages", ({ to, newMessages }) => {
-    console.log(newMessages);
-    socket.to(to).emit("new_message_update", [newMessages]);
-  });
+ 
 
   socket.on("disconnect", () => {
     const newUsers = users.map((user) => user.userId.indexOf(socket.id));

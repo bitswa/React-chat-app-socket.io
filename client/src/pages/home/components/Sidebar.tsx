@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../contexts/AppContext";
@@ -62,7 +62,7 @@ function Sidebar() {
                   <button
                     className="p-2 rounded-md bg-blue-500"
                     onClick={() => {
-                      setSelectedUser(userId);
+                      setSelectedUser({username, id: userId});
                       setUserModal("");
                       setShowProfileModal(false);
                     }}

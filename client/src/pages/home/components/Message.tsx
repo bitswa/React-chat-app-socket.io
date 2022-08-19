@@ -11,9 +11,7 @@ interface Props {
   content: string;
 }
 
-function Message({ from, content, index }: Props) {
-  const { removeMessage, selectedUser } = useContext(AppContext);
-
+function Message({ from, content }: Props) {
   return (
     <div className="flex p-2 hover:bg-zinc-600 rounded-md hover_message">
       <div className="mr-2">
@@ -23,16 +21,6 @@ function Message({ from, content, index }: Props) {
         <div>
           {from?.username == "" ? from?.id : from?.username}
           <p>{content}</p>
-        </div>
-        <div className="flex items-center hover_message_icons opacity-0">
-          {selectedUser !== from.id && (
-            <button
-              className="bg-red-600 rounded-full p-1"
-              onClick={() => removeMessage(index)}
-            >
-              <TrashIcon />
-            </button>
-          )}
         </div>
       </div>
     </div>

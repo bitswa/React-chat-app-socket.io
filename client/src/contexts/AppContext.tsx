@@ -35,7 +35,7 @@ function AppContextProvider({ children }) {
 
   const [users, setUsers] = useState<Users[]>([]);
   const [profile, setProfile] = useState({});
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState({});
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
@@ -50,7 +50,7 @@ function AppContextProvider({ children }) {
         username,
         image,
       },
-      to: selectedUser,
+      to: selectedUser.id,
       content: message,
     });
     setMessages((prev) => [
@@ -68,6 +68,7 @@ function AppContextProvider({ children }) {
   };
 
   const handleModification = () => {
+    if (username === "") return;
     updateUserData(image, username).then(() => runGetUserData());
   };
 
@@ -75,29 +76,20 @@ function AppContextProvider({ children }) {
     const data = await getUserData();
     if (!data) return;
 
-    const { image, username } = data;
+    const { newImage, newUsername } = data;
+
+    if (newImage === image && newUsername === username) return;
 
     console.log(data);
 
     socket.emit("user_modification", {
       userId: socket.id,
-      image: image,
-      username: username,
+      image: newImage,
+      username: newUsername,
     });
 
-    setImage(data?.image);
-    setUsername(data?.username);
-  };
-
-  const removeMessage = (key) => {
-    const newMessages = messages.filter((msg, index) => index !== key);
-    console.log(key);
-    console.log(newMessages);
-
-    socket.emit("new_messages", {
-      to: selectedUser,
-      newMessages,
-    });
+    setImage(data?.newImage);
+    setUsername(data?.newUsername);
   };
 
   useEffect(() => {
@@ -133,7 +125,7 @@ function AppContextProvider({ children }) {
 
     // receiving message from server
     socket.on("private_message", ({ from, content }: Message) => {
-      if (selectedUser !== from.id) return;
+      if (selectedUser.id !== from.id) return;
 
       setMessages((prev) => [
         ...prev,
@@ -144,10 +136,6 @@ function AppContextProvider({ children }) {
       ]);
     });
   }, [socket, selectedUser]);
-
-  socket.on("new_message_update", ({ newMessages }) => {
-    setMessages(newMessages);
-  });
 
   useEffect(() => {
     const localUser = localStorage.getItem("user");
@@ -174,7 +162,6 @@ function AppContextProvider({ children }) {
         handleModification,
         messages,
         handleText,
-        removeMessage,
       }}
     >
       {children}
