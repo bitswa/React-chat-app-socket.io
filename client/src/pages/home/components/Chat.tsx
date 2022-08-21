@@ -26,7 +26,7 @@ interface Emojis {
 }
 
 function Chat() {
-  const { message, messages, handleText, setMessage, selectedUser } =
+  const { message, messages, handleText, setMessage, typing, selectedUser } =
     useContext<Context>(AppContext);
 
   const [emojis, setEmojis] = useState<Emojis[]>([]);
@@ -46,8 +46,11 @@ function Chat() {
 
   return (
     <div className="w-full flex flex-col justify-between bg-zinc-800 rounded-md">
-      <div className="h-[60px] border-b border-zinc-700 flex items-center p-4">
+      <div className="h-[80px] border-b border-zinc-700 flex flex-col items-start justify-center p-4">
         <h1>with: {selectedUser.username}</h1>
+        
+          <p className="text-sm text-gray-500">{typing}</p>
+        
       </div>
 
       <div className="h-full p-2">
@@ -86,7 +89,7 @@ function Chat() {
               {emojis[emoji]?.character}
             </button>
             {showEmojisModal && (
-              <div className="absolute grid grid-cols-6 overflow-y-auto h-[210px] w-max top-0 left-0 bg-zinc-600 translate-x-[-60%] translate-y-[-110%]">
+              <div className="absolute rounded-md grid grid-cols-6 overflow-y-auto h-[210px] w-max top-0 left-0 bg-zinc-600 translate-x-[-60%] translate-y-[-110%]">
                 {emojis?.slice(0, 100).map((emoji) => {
                   return (
                     <button
@@ -96,7 +99,7 @@ function Chat() {
                         setMessage((prev: string) => prev + emoji.character);
                         setShowEmojiModal(false);
                       }}
-                      className=" p-1 hover:bg-zinc-500 rounded-lg"
+                      className=" p-2 hover:bg-zinc-500 rounded-lg text-sm"
                     >
                       {emoji.character}
                     </button>

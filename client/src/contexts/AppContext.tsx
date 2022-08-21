@@ -40,6 +40,7 @@ function AppContextProvider({ children }) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [image, setImage] = useState("");
   const [username, setUsername] = useState("");
+  const [typing, setTyping] = useState("")
 
   const handleText = () => {
     if (message === "") return;
@@ -135,7 +136,31 @@ function AppContextProvider({ children }) {
         },
       ]);
     });
+
+    socket.on("receive_message_state", ({state}) => {
+      setTyping(state)
+      console.log("event")
+    })
   }, [socket, selectedUser]);
+
+  useEffect(() => {
+    if (message === "") {
+      socket.emit("message_state", {
+        to: selectedUser.id,
+        state: ""
+      })
+      return;
+    }
+
+    socket.emit("message_state", {
+      to: selectedUser.id,
+      state: "typing..."
+    })
+  }, [socket, message])
+
+  useEffect(() => {
+    console.log(typing)
+  }, [typing])
 
   useEffect(() => {
     const localUser = localStorage.getItem("user");
@@ -162,6 +187,7 @@ function AppContextProvider({ children }) {
         handleModification,
         messages,
         handleText,
+        typing
       }}
     >
       {children}

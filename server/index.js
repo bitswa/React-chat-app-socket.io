@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
     username: "",
   });
-
+  
   io.emit("connected", { users });
 
   socket.on("send_message", ({ to, from, content }) => {
@@ -35,6 +35,13 @@ io.on("connection", (socket) => {
       content,
     });
   });
+
+  socket.on("message_state", ({to, state}) => {
+    console.log(to, state)
+    socket.to(to).emit("receive_message_state", {
+      state
+    })
+  })
 
   socket.on("user_modification", ({ userId, image, username }) => {
     console.log(users);
@@ -53,8 +60,6 @@ io.on("connection", (socket) => {
       io.emit("connected", { users });
     });
   });
-
- 
 
   socket.on("disconnect", () => {
     const newUsers = users.map((user) => user.userId.indexOf(socket.id));
