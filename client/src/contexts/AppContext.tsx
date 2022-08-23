@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { FirebaseContext } from "./FirebaseContext";
 
-const socket = io("http://localhost:3001");
+const socket = io(import.meta.env.VITE_SERVER_SIDE);
 
 interface Message {
   from: {
